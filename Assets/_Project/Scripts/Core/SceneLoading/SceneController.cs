@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.UI.Interfaces;
@@ -7,10 +6,10 @@ using Sisus.Init;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace _Project.Scripts.Core
+namespace _Project.Scripts.Core.SceneLoading
 {
-    [Service(typeof(SceneLoader), FindFromScene = true)]
-    public class SceneLoader : MonoBehaviour<ITransition>
+    [Service(typeof(SceneController), FindFromScene = true)]
+    public class SceneController : MonoBehaviour<ITransition>
     {
         private ITransition _loadingOverlay;
         
@@ -46,7 +45,7 @@ namespace _Project.Scripts.Core
         {
             if (_isBusy)
             {
-                Debug.LogWarning("SceneLoader is busy. Cannot load new strategy.");
+                Debug.LogWarning("SceneLoading is busy. Cannot load new strategy.");
                 return null;
             }
 
@@ -171,11 +170,11 @@ namespace _Project.Scripts.Core
             public bool ClearUnusedAssets { get; private set; } = false;
             public bool Overlay { get; private set; } = false;
             
-            private readonly SceneLoader _loader;
+            private readonly SceneController _controller;
             
-            public SceneLoadingStrategy(SceneLoader loader)
+            public SceneLoadingStrategy(SceneController controller)
             {
-                _loader = loader;
+                _controller = controller;
             }
             
             public SceneLoadingStrategy Load(string sceneName, bool setActive = false)
@@ -206,7 +205,7 @@ namespace _Project.Scripts.Core
 
             public Coroutine Execute()
             {
-                return _loader.ExecuteLoadingStrategy(this);
+                return _controller.ExecuteLoadingStrategy(this);
             }
         }
 #endregion

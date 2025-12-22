@@ -24,7 +24,7 @@ namespace _Project.Scripts.UI
             
             Tween.Alpha(
                 target: _canvasGroup,
-                endValue: 255f,
+                endValue: 1f,
                 duration: fadeDuration
             );
         }
