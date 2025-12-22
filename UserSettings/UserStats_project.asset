@@ -12,33 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086316249d6762c4cbf81f1a215736a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: TinyGiantStudio.DevTools.DevTrails::TinyGiantStudio.DevTools.DevTrails.UserStats_Project
-  currentSessionIDCache: -1
+  currentSessionIDCache: 0
   probablyCrashes: 0
-  totalUseTime: 0
-  activeUseTime: 0
-  focusedUseTime: 0
-  _enteredPlayMode: 0
-  _playModeUseTime: 0
-  _sceneSaved: 0
-  _sceneOpened: 1
-  _sceneClosed: 1
-  _undoRedoCounter: 0
-  _compileCounter: 47
+  totalUseTime: 101911
+  activeUseTime: 2117
+  focusedUseTime: 2214
+  _enteredPlayMode: 14
+  _playModeUseTime: 222
+  _sceneSaved: 5
+  _sceneOpened: 3
+  _sceneClosed: 45
+  _undoRedoCounter: 2
+  _compileCounter: 178
   _totalTimeSpentCompiling: 0
-  _timeSpentCompiling: 211.87505
+  _timeSpentCompiling: 385.314
   _totalTimeSpentInDomainReload: 0
-  _timeSpentInDomainReload: 203.69542
-  _logCounter_editor: 0
-  _logCounter_playMode: 0
-  _warningLogCounter_editor: 1
-  _warningLogCounter_playMode: 0
-  _errorLogCounter_editor: 27
-  _errorLogCounter_playMode: 0
-  _exceptionLogCounter_editor: 1
+  _timeSpentInDomainReload: 780.1941
+  _logCounter_editor: 2
+  _logCounter_playMode: 158
+  _warningLogCounter_editor: 7927
+  _warningLogCounter_playMode: 4
+  _errorLogCounter_editor: 143
+  _errorLogCounter_playMode: 1
+  _exceptionLogCounter_editor: 6
   _exceptionLogCounter_playMode: 0
   _projectOpenCounter: 0
   _totalTimeSpentOpeningProject: 0
-  _devToolsEditorWindowOpened: 1
+  _devToolsEditorWindowOpened: 2
   _pauseRecords:
     sessionID: 0
     sessions: []
