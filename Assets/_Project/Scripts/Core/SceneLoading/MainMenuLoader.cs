@@ -13,7 +13,7 @@ namespace _Project.Scripts.Core.SceneLoading
             _sceneController = argument;
         }
 
-        private void Start()
+        protected override void OnAwake()
         {
             _sceneController
                 .NewStrategy()
