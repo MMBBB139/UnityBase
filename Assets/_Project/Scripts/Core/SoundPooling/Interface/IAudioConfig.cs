@@ -17,6 +17,7 @@ namespace _Project.Scripts.Core.SoundPooling.Interface
         public int Priority { get; set; }
         public AudioMixerGroup AudioMixerGroup { get; set; }
         public Vector3 Position { get; set; }
+        public float Pitch { get; set; }
         public float SpatialBlend { get; set; }
         public bool Loop { get; set; }
         public float MinDistance { get; set; }

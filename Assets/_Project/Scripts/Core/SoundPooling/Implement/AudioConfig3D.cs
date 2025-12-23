@@ -4,7 +4,10 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
 {
     public class AudioConfig3D : AudioConfigBase<AudioConfig3D>
     {
-        public AudioConfig3D(AudioPooler audioPooler, AudioClip audioClip) : base(audioPooler, audioClip) { }
+        public AudioConfig3D(AudioPooler audioPooler, AudioClip audioClip) : base(audioPooler, audioClip)
+        {
+            SpatialBlend = 1f;
+        }
         
         public AudioConfig3D AtPosition(Vector3 position)
         {

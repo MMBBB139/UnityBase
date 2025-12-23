@@ -49,6 +49,7 @@ namespace _Sample.Scripts
                     .OnChannel(AudioType.Sfx)
                     .AtPosition(bulletSpawnPoint.position)
                     .MarkFrequent()
+                    .RandomizePitch()
                     .Play();
             }
         }

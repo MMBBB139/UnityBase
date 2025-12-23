@@ -39,6 +39,7 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
             _audioSource.outputAudioMixerGroup = audioConfig.AudioMixerGroup;
             Priority = audioConfig.Priority;
             transform.position = audioConfig.Position;
+            _audioSource.pitch = audioConfig.Pitch;
             _audioSource.spatialBlend = audioConfig.SpatialBlend;
             _audioSource.loop = audioConfig.Loop;
             _audioSource.minDistance = audioConfig.MinDistance;
