@@ -1,44 +1,57 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 namespace _Project.Scripts.Core.SoundPooling
 {
     public abstract class AudioConfigBase<TSelf> : IAudioConfig where TSelf : AudioConfigBase<TSelf>
     {
-        private readonly SoundPooler _soundPooler;
+        private readonly AudioPooler _audioPooler;
         
-        public AudioClip AudioClip { get; set; }
+        public AudioClip Clip { get; set; }
         public AudioType AudioType { get; set; }
+        public int Priority { get; set; } = 1;
+        public AudioMixerGroup AudioMixerGroup { get; set; }
         public Vector3 Position { get; set; }
-        public float SpacialBlend { get; set; }
+        public float SpatialBlend { get; set; }
         public float MinDistance { get; set; }
         public float MaxDistance { get; set; }
         public bool IsBypassReverbZones { get; set; }
-        public bool IsLooping { get; set; }
+        public bool Loop { get; set; }
 
-        protected AudioConfigBase(SoundPooler soundPooler, AudioClip audioClip)
+        protected AudioConfigBase(AudioPooler audioPooler, AudioClip audioClip)
         {
-            _soundPooler = soundPooler;
-            AudioClip = audioClip;
+            _audioPooler = audioPooler;
+            Clip = audioClip;
+            
+            // Default mixer group
+            AudioMixerGroup = _audioPooler.GetMixerFor(AudioType.Sfx);
         }
         
-        protected TSelf OnChannel(AudioType audioType)
+        public TSelf OnChannel(AudioType audioType)
         {
             AudioType = audioType;
+            AudioMixerGroup = _audioPooler.GetMixerFor(audioType);
             return (TSelf) this;
         }
 
-        public TSelf AtPosition(Vector3 position)
+        public TSelf LoopAudio()
         {
-            Position = position;
+            Loop = true;
             return (TSelf) this;
         }
 
-        public TSelf Loop()
+        public TSelf AddPriority(int priority)
         {
-            IsLooping = true;
-            return (TSelf) this;
+            Priority = priority;
+            return (TSelf)this;
         }
 
-        public IAudioPlayer Play() => _soundPooler.Play(this);
+        public TSelf MarkFrequent()
+        {
+            Priority = 0;
+            return (TSelf)this;
+        }
+
+        public IAudioPlayer Play() => _audioPooler.Play(this);
     }
 }

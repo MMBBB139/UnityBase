@@ -250,7 +250,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49943036d1bd4242b6b03c17dd8e32ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.MenuLoader
-  menuScene: MainMenu
+  sceneRefs:
+  - buildIndex: 3
+  - buildIndex: 2
+  withOverlay: 0
 --- !u!4 &241062100
 Transform:
   m_ObjectHideFlags: 0
@@ -352,8 +355,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalRotation: {x: -0.11703878, y: 0.26676083, z: -0.032654054, w: -0.9560723}
+  m_LocalPosition: {x: 3.7119904, y: 2.390062, z: -3.6051254}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

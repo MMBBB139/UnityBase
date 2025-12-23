@@ -1,22 +1,24 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 namespace _Project.Scripts.Core.SoundPooling
 {
     public enum AudioType
     {
-        Sfx,
-        UI,
         Music,
-        Master
+        UI,
+        Sfx
     }
     
     public interface IAudioConfig
     {
-        public AudioClip AudioClip { get; set; }
-        public AudioType AudioType { get; set; } 
+        public AudioClip Clip { get; set; }
+        public AudioType AudioType { get; set; }
+        public int Priority { get; set; }
+        public AudioMixerGroup AudioMixerGroup { get; set; }
         public Vector3 Position { get; set; }
-        public float SpacialBlend { get; set; }
-        public bool IsLooping { get; set; }
+        public float SpatialBlend { get; set; }
+        public bool Loop { get; set; }
         public float MinDistance { get; set; }
         public float MaxDistance { get; set; }
         public bool IsBypassReverbZones { get; set; }

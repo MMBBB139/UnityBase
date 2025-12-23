@@ -4,7 +4,13 @@ namespace _Project.Scripts.Core.SoundPooling
 {
     public class AudioConfig3D : AudioConfigBase<AudioConfig3D>
     {
-        public AudioConfig3D(SoundPooler soundPooler, AudioClip audioClip) : base(soundPooler, audioClip) { }
+        public AudioConfig3D(AudioPooler audioPooler, AudioClip audioClip) : base(audioPooler, audioClip) { }
+        
+        public AudioConfig3D AtPosition(Vector3 position)
+        {
+            Position = position;
+            return this;
+        }
         
         public AudioConfig3D WithMinDistance(float minDistance)
         {

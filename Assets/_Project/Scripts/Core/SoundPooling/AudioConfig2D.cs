@@ -4,9 +4,10 @@ namespace _Project.Scripts.Core.SoundPooling
 {
     public class AudioConfig2D : AudioConfigBase<AudioConfig2D>
     {
-        public AudioConfig2D(SoundPooler soundPooler, AudioClip audioClip) : base(soundPooler, audioClip)
+        public AudioConfig2D(AudioPooler audioPooler, AudioClip audioClip) : base(audioPooler, audioClip)
         {
-            SpacialBlend = 0f;
+            SpatialBlend = 0f;
+            Position = Vector3.zero;
         }
     }
 }
