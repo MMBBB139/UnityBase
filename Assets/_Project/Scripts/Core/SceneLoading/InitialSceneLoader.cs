@@ -23,6 +23,13 @@ namespace _Project.Scripts.Core.SceneLoading
 
             foreach (var scene in sceneRefs)
             {
+                if (scene.BuildIndex == 0)
+                {
+                    Debug.LogError($"GameObject: {gameObject.name} from Scene: {gameObject.scene.name} " +
+                                   $"Tried to load BootStrap. Skip Scene loading");
+                    continue;
+                }
+                
                 loadingStrategy.Load(scene.BuildIndex);
             }
 
