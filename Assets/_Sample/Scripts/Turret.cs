@@ -1,10 +1,10 @@
 using System;
 using _Project.Scripts.Core.SoundPooling;
-using ImprovedTimers;
+using _Project.Scripts.Util.Timer.Timers;
 using Sisus.Init;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using AudioType = _Project.Scripts.Core.SoundPooling.AudioType;
+using AudioType = _Project.Scripts.Core.SoundPooling.Interface.AudioType;
 
 namespace _Sample.Scripts
 {

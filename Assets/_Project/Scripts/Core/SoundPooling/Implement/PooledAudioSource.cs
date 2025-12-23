@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
+using _Project.Scripts.Core.SoundPooling.Interface;
 using _Project.Scripts.Util;
+using _Project.Scripts.Util.GameObject.Extension;
 using Sisus.Init;
 using UnityEngine;
+using AudioType = _Project.Scripts.Core.SoundPooling.Interface.AudioType;
 
-namespace _Project.Scripts.Core.SoundPooling
+namespace _Project.Scripts.Core.SoundPooling.Implement
 {
     public class PooledAudioSource : MonoBehaviour<AudioPooler>, IAudioPlayer
     {

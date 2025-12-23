@@ -1,30 +1,31 @@
 using System.Collections.Generic;
+using _Project.Scripts.Util.Timer.Extensions;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer {
     public static class TimerManager {
-        static readonly List<Timer> timers = new();
-        static readonly List<Timer> sweep = new();
+        static readonly List<Timer> _timers = new();
+        static readonly List<Timer> _sweep = new();
         
-        public static void RegisterTimer(Timer timer) => timers.Add(timer);
-        public static void DeregisterTimer(Timer timer) => timers.Remove(timer);
+        public static void RegisterTimer(Timer timer) => _timers.Add(timer);
+        public static void DeregisterTimer(Timer timer) => _timers.Remove(timer);
 
         public static void UpdateTimers() {
-            if (timers.Count == 0) return;
+            if (_timers.Count == 0) return;
             
-            sweep.RefreshWith(timers);
-            foreach (var timer in sweep) {
+            _sweep.RefreshWith(_timers);
+            foreach (var timer in _sweep) {
                 timer.Tick();
             }
         }
         
         public static void Clear() {
-            sweep.RefreshWith(timers);
-            foreach (var timer in sweep) {
+            _sweep.RefreshWith(_timers);
+            foreach (var timer in _sweep) {
                 timer.Dispose();
             }
             
-            timers.Clear();
-            sweep.Clear();
+            _timers.Clear();
+            _sweep.Clear();
         }
     }
 }

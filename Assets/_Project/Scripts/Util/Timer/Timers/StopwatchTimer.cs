@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer.Timers {
     /// <summary>
     /// Timer that counts up from zero to infinity.  Great for measuring durations.
     /// </summary>

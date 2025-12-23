@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer.Timers {
     /// <summary>
     /// Timer that counts down from a specific value to zero.
     /// </summary>
@@ -19,6 +19,6 @@ namespace ImprovedTimers {
         }
 
         public override bool IsFinished => CurrentTime <= 0;
-        public override float Progress => CurrentTime / initialTime;
+        public override float Progress => CurrentTime / _initialTime;
     }
 }

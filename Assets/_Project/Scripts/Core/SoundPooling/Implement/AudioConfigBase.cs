@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using _Project.Scripts.Core.SoundPooling.Interface;
+using UnityEngine;
 using UnityEngine.Audio;
+using AudioType = _Project.Scripts.Core.SoundPooling.Interface.AudioType;
 
-namespace _Project.Scripts.Core.SoundPooling
+namespace _Project.Scripts.Core.SoundPooling.Implement
 {
     public abstract class AudioConfigBase<TSelf> : IAudioConfig where TSelf : AudioConfigBase<TSelf>
     {

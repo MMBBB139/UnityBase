@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 
-namespace _Project.Scripts.Core.SoundPooling
+namespace _Project.Scripts.Core.SoundPooling.Interface
 {
     public enum AudioType
     {

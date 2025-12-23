@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer {
     internal static class TimerBootstrapper {
-        static PlayerLoopSystem timerSystem;
+        static PlayerLoopSystem _timerSystem;
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         internal static void Initialize() {
@@ -34,16 +34,16 @@ namespace ImprovedTimers {
         }
 
         static void RemoveTimerManager<T>(ref PlayerLoopSystem loop) {
-            PlayerLoopUtils.RemoveSystem<T>(ref loop, in timerSystem);
+            PlayerLoopUtils.RemoveSystem<T>(ref loop, in _timerSystem);
         }
 
         static bool InsertTimerManager<T>(ref PlayerLoopSystem loop, int index) {
-            timerSystem = new PlayerLoopSystem() {
+            _timerSystem = new PlayerLoopSystem() {
                 type = typeof(TimerManager),
                 updateDelegate = TimerManager.UpdateTimers,
                 subSystemList = null
             };
-            return PlayerLoopUtils.InsertSystem<T>(ref loop, in timerSystem, index);
+            return PlayerLoopUtils.InsertSystem<T>(ref loop, in _timerSystem, index);
         }
     }
 }

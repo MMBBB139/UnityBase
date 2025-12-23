@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Core.SoundPooling.Implement;
+using _Project.Scripts.Core.SoundPooling.Interface;
 using AYellowpaper.SerializedCollections;
 using Sisus.Init;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
+using AudioType = _Project.Scripts.Core.SoundPooling.Interface.AudioType;
 
 namespace _Project.Scripts.Core.SoundPooling
 {

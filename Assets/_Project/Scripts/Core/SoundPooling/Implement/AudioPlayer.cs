@@ -1,39 +1,8 @@
-﻿using System;
+﻿using _Project.Scripts.Core.SoundPooling.Interface;
 using UnityEngine;
 
-namespace _Project.Scripts.Core.SoundPooling
+namespace _Project.Scripts.Core.SoundPooling.Implement
 {
-    public interface IAudioPlayer
-    {
-        void Play();
-        void Stop();
-        void Pause();
-        void Resume();
-    }
-
-    public class EmptyAudioPlayer : IAudioPlayer
-    {
-        public void Play()
-        {
-            //noop
-        }
-
-        public void Stop()
-        {
-            //noop
-        }
-
-        public void Pause()
-        {
-            //noop
-        }
-
-        public void Resume()
-        {
-            //noop
-        }
-    }
-    
     public class AudioPlayer : IAudioPlayer
     {
         private PooledAudioSource _audioSource;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer.Extensions {
     public static class ListExtensions {
         public static void RefreshWith<T>(this List<T> list, IEnumerable<T> items) {
             list.Clear();

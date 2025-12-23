@@ -3,7 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace _Project.Scripts.Util
+namespace _Project.Scripts.Util.Scene
 {
     [Serializable]
     public class SceneReference

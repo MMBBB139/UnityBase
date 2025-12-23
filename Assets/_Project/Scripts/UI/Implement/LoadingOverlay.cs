@@ -3,7 +3,7 @@ using PrimeTween;
 using Sisus.Init;
 using UnityEngine;
 
-namespace _Project.Scripts.UI
+namespace _Project.Scripts.UI.Implement
 {
     [Service(typeof(ITransition), FindFromScene = true)]
     [RequireComponent(typeof(CanvasGroup))]

@@ -1,20 +1,19 @@
 using System;
-using UnityEngine;
 
-namespace ImprovedTimers {
+namespace _Project.Scripts.Util.Timer {
     public abstract class Timer : IDisposable {
         public float CurrentTime { get; protected set; }
         public bool IsRunning { get; private set; }
         public bool IsPaused { get; private set; }
 
-        protected float initialTime;
+        protected float _initialTime;
         
 
         public Action OnTimerRaised = delegate { };
         public Action OnTimerEnd = delegate { };
 
         protected Timer(float value) {
-            initialTime = value;
+            _initialTime = value;
             IsPaused = false;
         }
 
@@ -26,7 +25,7 @@ namespace ImprovedTimers {
                 return;
             }
             
-            CurrentTime = initialTime;
+            CurrentTime = _initialTime;
             if (!IsRunning) {
                 IsPaused = false;
                 IsRunning = true;
@@ -67,11 +66,11 @@ namespace ImprovedTimers {
         {
             IsRunning = false;
             IsPaused = false;
-            CurrentTime = initialTime;
+            CurrentTime = _initialTime;
         }
 
         public virtual void Reset(float newTime) {
-            initialTime = newTime;
+            _initialTime = newTime;
             Reset();
             //Questionable reset that may cause overhead when there are a lot of Timers active
             TimerManager.DeregisterTimer(this);
