@@ -1,4 +1,5 @@
-﻿using Sisus.Init;
+﻿using _Project.Scripts.Util;
+using Sisus.Init;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -6,7 +7,7 @@ namespace _Project.Scripts.Core.SceneLoading
 {
     public class SceneSwitcher : MonoBehaviour<SceneController>
     {
-        [SerializeField] private string scene = "";
+        [SerializeField] private SceneReference sceneRef;
         
         private SceneController _sceneController;
         protected override void Init(SceneController argument)
@@ -18,8 +19,8 @@ namespace _Project.Scripts.Core.SceneLoading
         {
             _sceneController
                 .NewStrategy()
-                .Load(scene)
-                .Unload(gameObject.scene.name)
+                .Load(sceneRef.BuildIndex)
+                .Unload(gameObject.scene.buildIndex)
                 .WithOverlay()
                 .Execute();
         }

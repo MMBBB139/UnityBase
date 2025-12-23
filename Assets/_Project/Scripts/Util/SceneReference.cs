@@ -1,0 +1,23 @@
+﻿using System;
+using System.IO;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace _Project.Scripts.Util
+{
+    [Serializable]
+    public class SceneReference
+    {
+        [SerializeField] private int buildIndex;
+        public int BuildIndex => buildIndex;
+
+        public string SceneName
+        {
+            get
+            {
+                string path = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+                return Path.GetFileNameWithoutExtension(path);
+            }
+        }
+    }
+}

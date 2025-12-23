@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.UI.Interfaces;
 using _Project.Scripts.Util;
+using NUnit.Framework;
 using Sisus.Init;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,21 +19,22 @@ namespace _Project.Scripts.Core.SceneLoading
             _loadingOverlay = argument;
         }
         
-        private readonly HashSet<string> _loadedScenes = new();
+        private readonly HashSet<int> _loadedScenes = new();
         private bool _isBusy;
 
         protected override void OnAwake()
         {
             for (int index = 0; index < SceneManager.sceneCount; index++)
             {
-                string sceneName = SceneManager.GetSceneAt(index).name;
+                int buildIndex = SceneManager.GetSceneAt(index).buildIndex;
 
-                if (sceneName.Equals(SceneDatabase.BootStrap))
+                // 0 is bootstrap
+                if (buildIndex == 0)
                 {
                     continue;
                 }
 
-                _loadedScenes.Add(sceneName);
+                _loadedScenes.Add(buildIndex);
             }
         }
 
@@ -66,19 +68,20 @@ namespace _Project.Scripts.Core.SceneLoading
                 yield return CleanUpUnusedAssetsRoutine();
             }
             
-            foreach(var sceneName in sceneLoadingStrategy.ScenesToUnload)
+            foreach(var sceneBuildIndex in sceneLoadingStrategy.ScenesToUnload)
             {
-                yield return UnloadSceneRoutine(sceneName);
+                yield return UnloadSceneRoutine(sceneBuildIndex);
             }
 
-            foreach (var sceneName in sceneLoadingStrategy.ScenesToLoad)
+            foreach (var sceneBuildIndex in sceneLoadingStrategy.ScenesToLoad)
             {
-                if (_loadedScenes.Contains(sceneName))
+                Assert.IsNotNull(sceneBuildIndex, "SceneName was Null");
+                if (_loadedScenes.Contains(sceneBuildIndex))
                 {
-                    Debug.LogWarning($"Scene {sceneName} is already loaded. Skipping.");
+                    Debug.LogWarning($"Scene {sceneBuildIndex} is already loaded. Skipping.");
                     continue;
                 }
-                yield return AdditiveLoadRoutine(sceneName, sceneName.Equals(sceneLoadingStrategy.ActiveSceneName));
+                yield return AdditiveLoadRoutine(sceneBuildIndex, sceneBuildIndex == sceneLoadingStrategy.ActiveSceneBuildIndex);
             }
             
             if (sceneLoadingStrategy.Overlay)
@@ -99,15 +102,9 @@ namespace _Project.Scripts.Core.SceneLoading
             
         }
 
-        private IEnumerator AdditiveLoadRoutine(string sceneName, bool setActive = false)
+        private IEnumerator AdditiveLoadRoutine(int sceneBuildIndex, bool setActive = false)
         {
-            if (string.IsNullOrEmpty(sceneName))
-            {
-                Debug.LogWarning("Scene name is empty. Skip Loading Scene.");
-                yield break;
-            }
-            
-            AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+            AsyncOperation loadOp = SceneManager.LoadSceneAsync(sceneBuildIndex, LoadSceneMode.Additive);
             
             if(loadOp == null) yield break;
             
@@ -127,7 +124,7 @@ namespace _Project.Scripts.Core.SceneLoading
 
             if (setActive)
             {
-                Scene newScene = SceneManager.GetSceneByName(sceneName);
+                Scene newScene = SceneManager.GetSceneByBuildIndex(sceneBuildIndex);
 
                 if (newScene.IsValid() && newScene.isLoaded)
                 {
@@ -135,21 +132,21 @@ namespace _Project.Scripts.Core.SceneLoading
                 }
             }
             
-            _loadedScenes.Add(sceneName);
+            _loadedScenes.Add(sceneBuildIndex);
         }
 
-        private IEnumerator UnloadSceneRoutine(string sceneName)
+        private IEnumerator UnloadSceneRoutine(int buildIndex)
         {
-            if (!_loadedScenes.Contains(sceneName) || string.IsNullOrEmpty(sceneName))
+            if (!_loadedScenes.Contains(buildIndex))
             {
-                Debug.LogWarning($"Scene {sceneName} is not loaded. Skipping.");
+                Debug.LogWarning($"Scene {buildIndex} is not loaded. Skipping.");
                 yield break;
             }
-            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(sceneName);
+            AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(buildIndex);
 
             if (unloadOp == null)
             {
-                Debug.LogWarning($"Scene {sceneName} failed to load.");
+                Debug.LogWarning($"Scene {buildIndex} failed to load.");
                 yield break;
             }
 
@@ -158,15 +155,15 @@ namespace _Project.Scripts.Core.SceneLoading
                 yield return null;
             }
 
-            _loadedScenes.Remove(sceneName);
+            _loadedScenes.Remove(buildIndex);
         }
         
         #region Scene Loading Strategy
         public class SceneLoadingStrategy
         {
-            public HashSet<string> ScenesToLoad { get; } = new();
-            public List<string> ScenesToUnload { get; } = new();
-            public string ActiveSceneName { get; private set; } = "";
+            public HashSet<int> ScenesToLoad { get; } = new();
+            public List<int> ScenesToUnload { get; } = new();
+            public int ActiveSceneBuildIndex { get; private set; }
             public bool ClearUnusedAssets { get; private set; } = false;
             public bool Overlay { get; private set; } = false;
             
@@ -176,23 +173,23 @@ namespace _Project.Scripts.Core.SceneLoading
             {
                 _controller = controller;
             }
-            
-            public SceneLoadingStrategy Load(string sceneName, bool setActive = false)
+
+            public SceneLoadingStrategy Load(int sceneBuildIndex, bool setActive = false)
             {
-                ScenesToLoad.Add(sceneName);
-                ActiveSceneName = setActive ? sceneName : ActiveSceneName;
+                ScenesToLoad.Add(sceneBuildIndex);
+                ActiveSceneBuildIndex = setActive ? sceneBuildIndex : ActiveSceneBuildIndex;
                 return this;
             }
             
-            public SceneLoadingStrategy Unload(string sceneName)
+            public SceneLoadingStrategy Unload(int sceneBuildIndex)
             {
-                ScenesToUnload.Add(sceneName);
+                ScenesToUnload.Add(sceneBuildIndex);
                 return this;
             }
             
-            public SceneLoadingStrategy WithOverlay()
+            public SceneLoadingStrategy WithOverlay(bool withOverlay = true)
             {
-                Overlay = true;
+                Overlay = withOverlay;
                 return this;
             }
             
