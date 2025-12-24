@@ -20,11 +20,11 @@ namespace _Project.Scripts.Core.SoundPooling
         
         [SerializeField] private bool createBuffer;
         [SerializeField] private int bufferSize;
-        
-        [SerializeField] private SerializedDictionary<AudioType, int> maxAudioSources = new();
-        [SerializeField] private SerializedDictionary<AudioType, AudioMixerGroup> audioMixerGroups = new ();
-        [SerializeField] private List<PooledAudioSource> inactiveSources = new();
-        [SerializeField] private SerializedDictionary<AudioType, List<PooledAudioSource>> activeSources = new();
+
+        [SerializeField] private SerializedDictionary<AudioType, int> maxAudioSources;
+        [SerializeField] private SerializedDictionary<AudioType, AudioMixerGroup> audioMixerGroups;
+        [SerializeField] private List<PooledAudioSource> inactiveSources;
+        [SerializeField] private SerializedDictionary<AudioType, List<PooledAudioSource>> activeSources;
         
         private readonly HashSet<AudioType> _audioTypes = new();
         private void OnValidate()
@@ -86,7 +86,7 @@ namespace _Project.Scripts.Core.SoundPooling
                 inactiveSources.Add(audioSource);
             }
             
-            foreach (AudioType audioType in _audioTypes)
+            foreach (AudioType audioType in (AudioType []) Enum.GetValues(typeof(AudioType)))
             {
                 activeSources[audioType] = new List<PooledAudioSource>();
             }
