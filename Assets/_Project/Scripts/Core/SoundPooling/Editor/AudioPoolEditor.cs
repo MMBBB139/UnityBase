@@ -10,8 +10,10 @@ namespace _Project.Scripts.Core.SoundPooling.Editor
         private SerializedProperty _bufferSize;
         private SerializedProperty _maxAudioSource;
         private SerializedProperty _audioMixerGroups;
-        private SerializedProperty _inactiveSources;
-        private SerializedProperty _activeSources;
+        private SerializedProperty _numberOfActiveSources;
+        private SerializedProperty _numberOfInactiveSources;
+        private SerializedProperty _activeSourcesByAudioType;
+        private SerializedProperty _activeSourcesBySceneIndex;
         private SerializedProperty _audioOverridePolicy;
 
         private void OnEnable()
@@ -20,8 +22,10 @@ namespace _Project.Scripts.Core.SoundPooling.Editor
             _bufferSize = serializedObject.FindProperty("bufferSize");
             _maxAudioSource = serializedObject.FindProperty("maxAudioSources");
             _audioMixerGroups = serializedObject.FindProperty("audioMixerGroups");
-            _inactiveSources = serializedObject.FindProperty("inactiveSources");
-            _activeSources = serializedObject.FindProperty("activeSources");
+            _numberOfActiveSources = serializedObject.FindProperty("numberOfActiveSources");
+            _numberOfInactiveSources = serializedObject.FindProperty("numberOfInactiveSources");
+            _activeSourcesByAudioType = serializedObject.FindProperty("activeSourcesByAudioType");
+            _activeSourcesBySceneIndex = serializedObject.FindProperty("activeSourcesBySceneIndex");
             _audioOverridePolicy =  serializedObject.FindProperty("audioOverridePolicy");
         }
 
@@ -54,9 +58,13 @@ namespace _Project.Scripts.Core.SoundPooling.Editor
 
             EditorGUILayout.PropertyField(_maxAudioSource);
             EditorGUILayout.PropertyField(_audioMixerGroups);
-            EditorGUILayout.PropertyField(_inactiveSources);
-            EditorGUILayout.PropertyField(_activeSources);
+            EditorGUILayout.PropertyField(_activeSourcesByAudioType);
+            EditorGUILayout.Space();
+            
+            EditorGUILayout.PropertyField(_numberOfActiveSources);
+            EditorGUILayout.PropertyField(_numberOfInactiveSources);
             EditorGUILayout.PropertyField(_audioOverridePolicy);
+            EditorGUILayout.PropertyField(_activeSourcesBySceneIndex);
 
             serializedObject.ApplyModifiedProperties();
         }

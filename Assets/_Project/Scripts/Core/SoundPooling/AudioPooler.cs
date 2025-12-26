@@ -19,11 +19,14 @@ namespace _Project.Scripts.Core.SoundPooling
     }
 
     [Service(typeof(AudioPooler), LoadScene = 0)]
-    public class AudioPooler : MonoBehaviour
+    public partial class AudioPooler : MonoBehaviour
     {
         #region DebugProperties
 
-        public int NumberOfActiveSounds { get; private set; }
+        [SerializeField] private int numberOfActiveSources;
+        [SerializeField] private int numberOfInactiveSources;
+        [SerializeField] private SerializedDictionary<AudioType, List<PooledAudioSource>> activeSourcesByAudioType;
+        [SerializeField] private SerializedDictionary<int, List<PooledAudioSource>> activeSourcesBySceneIndex;
 
         #endregion
 
@@ -34,8 +37,7 @@ namespace _Project.Scripts.Core.SoundPooling
 
         [SerializeField] private SerializedDictionary<AudioType, int> maxAudioSources;
         [SerializeField] private SerializedDictionary<AudioType, AudioMixerGroup> audioMixerGroups;
-        [SerializeField] private List<PooledAudioSource> inactiveSources;
-        [SerializeField] private SerializedDictionary<AudioType, List<PooledAudioSource>> activeSources;
+        private readonly Stack<PooledAudioSource> _inactiveSources = new();
 
         private readonly HashSet<AudioType> _audioTypes = new();
 
@@ -89,17 +91,11 @@ namespace _Project.Scripts.Core.SoundPooling
 
         private void Awake()
         {
-            //Buffer Audio Objects
             for (int i = 0; i < bufferSize; i++)
             {
                 var audioSource = CreateAudioSource();
                 audioSource.gameObject.SetActive(false);
-                inactiveSources.Add(audioSource);
-            }
-
-            foreach (AudioType audioType in (AudioType[])Enum.GetValues(typeof(AudioType)))
-            {
-                activeSources[audioType] = new List<PooledAudioSource>();
+                _inactiveSources.Push(audioSource);
             }
         }
 
@@ -117,71 +113,51 @@ namespace _Project.Scripts.Core.SoundPooling
         {
             // check for capacity availability
             PooledAudioSource audioSource = null;
-            if (activeSources[audioConfig.AudioType].Count >= maxAudioSources[audioConfig.AudioType])
+            if (!activeSourcesByAudioType.TryGetValue(audioConfig.AudioType, out List<PooledAudioSource> list) ||
+                list.Count < maxAudioSources[audioConfig.AudioType])
             {
-                int currentPriority = audioConfig.Priority;
-                int minPriority = Int32.MaxValue;
-                foreach (var activeAudio in activeSources[audioConfig.AudioType])
-                {
-                    if (activeAudio.Priority < minPriority && activeAudio.Priority < currentPriority)
-                    {
-                        minPriority = activeAudio.Priority;
-                        audioSource = activeAudio;
-                    }
-                }
+                return GetNextAudioSource(audioConfig);
+            }
 
-                if (audioSource != null)
-                {
+            int currentPriority = audioConfig.Priority;
+            int minPriority = Int32.MaxValue;
+            foreach (PooledAudioSource activeAudio in activeSourcesByAudioType[audioConfig.AudioType]
+                         .Where(activeAudio =>
+                                    activeAudio.Priority < minPriority && activeAudio.Priority < currentPriority))
+            {
+                minPriority = activeAudio.Priority;
+                audioSource = activeAudio;
+            }
+
+            if (audioSource != null)
+            {
+                Debug.LogWarning($"AudioPooler of AudioType: {audioConfig.AudioType} is Full. " +
+                                 $"Replaced playing {audioSource.Clip.name} with " +
+                                 $"{audioConfig.Clip.name}");
+                audioSource.Stop();
+
+                return GetNextAudioSource(audioConfig);
+            }
+
+            switch (audioOverridePolicy)
+            {
+                case AudioOverridePolicy.DontPlayOnFull:
                     Debug.LogWarning($"AudioPooler of AudioType: {audioConfig.AudioType} is Full. " +
-                                     $"Replaced playing {audioSource.Clip.name} with " +
+                                     $"Skip playing {audioConfig.Clip.name}");
+                    return new EmptyAudioPlayer();
+
+                case AudioOverridePolicy.OverrideFirst:
+                    PooledAudioSource first = activeSourcesByAudioType[audioConfig.AudioType]
+                        .First(val => val.Priority == audioConfig.Priority);
+
+                    Debug.LogWarning($"AudioPooler of AudioType: {audioConfig.AudioType} is Full. " +
+                                     $"Replaced playing {first.Clip.name} with " +
                                      $"{audioConfig.Clip.name}");
-                    audioSource.Stop();
-                    audioSource.Initialize(audioConfig);
-                    audioSource.gameObject.SetActive(true);
-                    audioSource.Play();
-                    return new AudioPlayer(audioSource);
-                }
-
-                switch (audioOverridePolicy)
-                {
-                    case AudioOverridePolicy.DontPlayOnFull:
-                        Debug.LogWarning($"AudioPooler of AudioType: {audioConfig.AudioType} is Full. " +
-                                         $"Skip playing {audioConfig.Clip.name}");
-                        return new EmptyAudioPlayer();
-                    case AudioOverridePolicy.OverrideFirst:
-                        PooledAudioSource first = activeSources[audioConfig.AudioType]
-                            .First(val => val.Priority == audioConfig.Priority);
-                        Debug.LogWarning($"AudioPooler of AudioType: {audioConfig.AudioType} is Full. " +
-                                         $"Replaced playing {first.Clip.name} with " +
-                                         $"{audioConfig.Clip.name}");
-                        first.Stop();
-                        first.Initialize(audioConfig);
-                        first.gameObject.SetActive(true);
-                        first.Play();
-                        
-                        return new AudioPlayer(first);
-                }
+                    first.Stop();
+                    break;
             }
 
-            // Check for Audio Availability
-            if (inactiveSources.Count > 0)
-            {
-                audioSource = inactiveSources[^1];
-                inactiveSources.RemoveAt(inactiveSources.Count - 1);
-                audioSource.Initialize(audioConfig);
-                audioSource.gameObject.SetActive(true);
-                activeSources[audioConfig.AudioType].Add(audioSource);
-                NumberOfActiveSounds++;
-                audioSource.Play();
-                return new AudioPlayer(audioSource);
-            }
-
-            audioSource = CreateAudioSource();
-            audioSource.Initialize(audioConfig);
-            activeSources[audioConfig.AudioType].Add(audioSource);
-            NumberOfActiveSounds++;
-            audioSource.Play();
-            return new AudioPlayer(audioSource);
+            return GetNextAudioSource(audioConfig);
         }
 
         public AudioMixerGroup GetMixerFor(AudioType audioType)
@@ -189,21 +165,61 @@ namespace _Project.Scripts.Core.SoundPooling
             return audioMixerGroups[audioType];
         }
 
+        private IAudioPlayer GetNextAudioSource(IAudioConfig audioConfig)
+        {
+            PooledAudioSource audioSource;
+            if (_inactiveSources.Count == 0)
+            {
+                audioSource = CreateAudioSource();
+            }
+            else
+            {
+                audioSource = _inactiveSources.Pop();
+            }
+
+            audioSource.Initialize(audioConfig);
+            audioSource.gameObject.SetActive(true);
+            audioSource.Play();
+
+            if (activeSourcesByAudioType.ContainsKey(audioConfig.AudioType))
+            {
+                activeSourcesByAudioType[audioConfig.AudioType].Add(audioSource);
+            }
+            else
+            {
+                activeSourcesByAudioType.TryAdd(audioConfig.AudioType, new List<PooledAudioSource> { audioSource });
+            }
+
+            if (activeSourcesBySceneIndex.ContainsKey(audioConfig.SceneBuildIndex))
+            {
+                activeSourcesBySceneIndex[audioConfig.SceneBuildIndex].Add(audioSource);
+            }
+            else
+            {
+                activeSourcesBySceneIndex.TryAdd(audioConfig.SceneBuildIndex,
+                    new List<PooledAudioSource> { audioSource });
+            }
+
+            numberOfInactiveSources = _inactiveSources.Count;
+            numberOfActiveSources++;
+            return new AudioPlayer(audioSource);
+        }
+
         public void ReturnToPool(PooledAudioSource pooledAudioSource)
         {
-            activeSources[pooledAudioSource.AudioType].Remove(pooledAudioSource);
+            activeSourcesByAudioType[pooledAudioSource.AudioType].Remove(pooledAudioSource);
+            activeSourcesBySceneIndex[pooledAudioSource.SceneBuildIndex].Remove(pooledAudioSource);
             pooledAudioSource.gameObject.SetActive(false);
-            NumberOfActiveSounds--;
-            inactiveSources.Add(pooledAudioSource);
+            _inactiveSources.Push(pooledAudioSource);
+            numberOfActiveSources--;
+            numberOfInactiveSources = _inactiveSources.Count;
         }
 
         private PooledAudioSource CreateAudioSource()
         {
             GameObject audioObject = new GameObject("AudioSource");
             audioObject.transform.SetParent(transform);
-
             PooledAudioSource audioComponent = audioObject.AddComponent<PooledAudioSource>();
-
             return audioComponent;
         }
     }

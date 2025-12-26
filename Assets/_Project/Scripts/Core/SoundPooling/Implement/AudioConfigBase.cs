@@ -8,7 +8,7 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
     public abstract class AudioConfigBase<TSelf> : IAudioConfig where TSelf : AudioConfigBase<TSelf>
     {
         private readonly AudioPooler _audioPooler;
-        
+        public int SceneBuildIndex { get; set; } = 0;
         public AudioClip Clip { get; set; }
         public AudioType AudioType { get; set; } = AudioType.Sfx;
         public int Priority { get; set; } = 1;
@@ -28,6 +28,12 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
             
             // Default mixer group
             AudioMixerGroup = _audioPooler.GetMixerFor(AudioType.Sfx);
+        }
+
+        public TSelf AddToScene(int sceneBuildIndex)
+        {
+            SceneBuildIndex = sceneBuildIndex;
+            return (TSelf) this;
         }
         
         public TSelf OnChannel(AudioType audioType)

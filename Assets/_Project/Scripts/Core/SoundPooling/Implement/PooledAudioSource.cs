@@ -3,6 +3,7 @@ using System.Collections;
 using _Project.Scripts.Core.SoundPooling.Interface;
 using _Project.Scripts.Util;
 using _Project.Scripts.Util.GameObject.Extension;
+using PrimeTween;
 using Sisus.Init;
 using UnityEngine;
 using AudioType = _Project.Scripts.Core.SoundPooling.Interface.AudioType;
@@ -12,6 +13,7 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
     public class PooledAudioSource : MonoBehaviour<AudioPooler>, IAudioPlayer
     {
         public event Action OnAudioFinished;
+        public int SceneBuildIndex { get; private set; }
         public int Priority { get; private set; }
         public AudioType AudioType { get; private set; }
         public AudioClip Clip { get; private set; }
@@ -33,6 +35,7 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
 
         public void Initialize(IAudioConfig audioConfig)
         {
+            SceneBuildIndex = audioConfig.SceneBuildIndex;
             AudioType = audioConfig.AudioType;
             Clip = audioConfig.Clip;
             _audioSource.clip = audioConfig.Clip;
@@ -45,6 +48,32 @@ namespace _Project.Scripts.Core.SoundPooling.Implement
             _audioSource.minDistance = audioConfig.MinDistance;
             _audioSource.maxDistance = audioConfig.MaxDistance;
             _audioSource.bypassReverbZones = audioConfig.IsBypassReverbZones;
+        }
+
+        public void FadeVolume(float volume, float duration = 0f)
+        {
+            float volumePercentage = volume / 100f;
+            volumePercentage = Mathf.Clamp(volumePercentage, 0f, 1f);
+
+            if (duration == 0f)
+            {
+                _audioSource.volume = volumePercentage;
+                if (volume == 0f)
+                {
+                    Stop();
+                }
+            }
+            
+            Tween.StopAll(_audioSource);
+            Tween.AudioVolume(
+                target: _audioSource,
+                endValue: volumePercentage,
+                duration: duration
+            ).OnComplete(() =>
+                         {
+                             if (volume == 0f)
+                                 Stop();
+                         });
         }
 
         public void Play()

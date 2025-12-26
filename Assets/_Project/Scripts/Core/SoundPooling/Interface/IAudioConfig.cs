@@ -12,6 +12,7 @@ namespace _Project.Scripts.Core.SoundPooling.Interface
     
     public interface IAudioConfig
     {
+        public int SceneBuildIndex { get; set; }
         public AudioClip Clip { get; set; }
         public AudioType AudioType { get; set; }
         public int Priority { get; set; }

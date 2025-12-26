@@ -1,29 +1,39 @@
-﻿using _Project.Scripts.Core.SoundPooling.Interface;
+﻿using System;
+using _Project.Scripts.Core.SoundPooling.Interface;
 using UnityEngine;
 
 namespace _Project.Scripts.Core.SoundPooling.Implement
 {
+    /// <summary>
+    /// Wrapper class for any IAudioPlayer
+    /// </summary>
     public class AudioPlayer : IAudioPlayer
     {
-        private PooledAudioSource _audioSource;
+        public event Action OnAudioFinished;
+        private IAudioPlayer _audioSource;
         private Coroutine _playingCoroutine;
         
-        public AudioPlayer(PooledAudioSource audioSource)
+        public AudioPlayer(IAudioPlayer audioSource)
         {
             _audioSource = audioSource;
             
-            _audioSource.OnAudioFinished += OnAudioFinished;
+            _audioSource.OnAudioFinished += AudioSourceOnAudioFinished;
         }
 
-        private void OnAudioFinished()
+        private void AudioSourceOnAudioFinished()
         {
             if (_audioSource == null)
             {
                 return;
             }
-            
-            _audioSource.OnAudioFinished -= OnAudioFinished;
+            OnAudioFinished?.Invoke();
+            _audioSource.OnAudioFinished -= AudioSourceOnAudioFinished;
             _audioSource = null;
+        }
+
+        public void FadeVolume(float volume, float duration = 0f)
+        {
+            _audioSource.FadeVolume(volume, duration);
         }
 
         public void Play()
