@@ -38,7 +38,7 @@ namespace _Project.Scripts.Core.SceneLoading
             
             foreach (var scene in scenesToUnload)
             {
-                if (sceneRef.BuildIndex == 0)
+                if (scene.BuildIndex == 0)
                 {
                     Debug.LogError($"GameObject: {gameObject.name} from Scene: {gameObject.scene.name} " +
                                    $"Tried to unload BootStrap. Skip Scene unloading");
