@@ -768,6 +768,82 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206761691}
   m_CullTransparentMesh: 1
+--- !u!1 &207702285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 207702288}
+  - component: {fileID: 207702287}
+  - component: {fileID: 207702286}
+  m_Layer: 0
+  m_Name: PauseListener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &207702286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207702285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2dc247a1be4d0ea2bc8179aa583027, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.SceneLoading.SceneUnloader
+  scenesToUnload:
+  - buildIndex: 4
+  withOverlay: 0
+--- !u!114 &207702287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207702285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32666d3369765084098b771df98af272, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PauseListener
+  onPauseEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 207702286}
+        m_TargetAssemblyTypeName: _Project.Scripts.Core.SceneLoading.SceneUnloader,
+          Assembly-CSharp
+        m_MethodName: UnloadScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!4 &207702288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 207702285}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &226116819
 GameObject:
   m_ObjectHideFlags: 0
@@ -3272,6 +3348,7 @@ MonoBehaviour:
   onColor: {r: 0.19607843, g: 0.5686275, b: 0.7137255, a: 1}
   offColor: {r: 0.65882355, g: 0.52156866, b: 0.52156866, a: 1}
   animationTime: 0.3
+  isMirrored: 0
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4202,3 +4279,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1933117369}
+  - {fileID: 207702288}

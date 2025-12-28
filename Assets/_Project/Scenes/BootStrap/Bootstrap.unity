@@ -502,6 +502,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f7b3489e9ad4d1bae4bdb6d3bb05dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Core.SoundPooling.SoundPooler
+  numberOfActiveSources: 0
+  numberOfInactiveSources: 0
+  activeSourcesByAudioType:
+    _serializedList: []
+  activeSourcesBySceneIndex:
+    _serializedList: []
   createBuffer: 0
   bufferSize: 0
   audioOverridePolicy: 1
@@ -521,9 +527,6 @@ MonoBehaviour:
       Value: {fileID: -3192169009679057751, guid: 996cf9c245ee1b14dbea11f329a233b7, type: 2}
     - Key: 2
       Value: {fileID: -3192169009679057751, guid: 996cf9c245ee1b14dbea11f329a233b7, type: 2}
-  inactiveSources: []
-  activeSources:
-    _serializedList: []
 --- !u!4 &575351709
 Transform:
   m_ObjectHideFlags: 0
