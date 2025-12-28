@@ -1,3 +1,4 @@
+using System;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,6 +28,8 @@ namespace _Project.Scripts.UI.UIElements
 
         [SerializeField]
         private float animationTime = 0.3f;
+
+        [SerializeField] private bool isMirrored;
         
         public UnityEvent<bool> onValueChanged;
 
@@ -42,9 +45,6 @@ namespace _Project.Scripts.UI.UIElements
 
         private void SetIsOn(bool value, bool sendCallback = true)
         {
-            if (isOn == value)
-                return;
-
             isOn = value;
 
             PlayEffect(false);
@@ -77,16 +77,12 @@ namespace _Project.Scripts.UI.UIElements
             base.OnEnable();
             m_toggleRectTransform = toggleBall.GetComponent<RectTransform>();
             m_backgroundRectTransform = background.gameObject.GetComponent<RectTransform>();
-            SetAnchors();
-            if (isOn)
-            {
-                //Swap start and end positions
-                (m_toggleStart, m_toggleEnd) = (m_toggleEnd, m_toggleStart);
-            }
+            
         }
 
         protected override void Start()
         {
+            SetAnchors();
             PlayEffect(true);
         }
 
@@ -111,7 +107,7 @@ namespace _Project.Scripts.UI.UIElements
             base.OnDidApplyAnimationProperties();
         }
 
-        private void SetAnchors()
+        public void SetAnchors()
         {
             float bgLeftAnchor = m_backgroundRectTransform.anchoredPosition.x -
                                  (m_backgroundRectTransform.pivot.x * m_backgroundRectTransform.sizeDelta.x);
@@ -119,12 +115,20 @@ namespace _Project.Scripts.UI.UIElements
                                   ((1 - m_backgroundRectTransform.pivot.x) * m_backgroundRectTransform.sizeDelta.x);
             float toggleLeftAnchor = m_toggleRectTransform.anchoredPosition.x -
                                      (m_toggleRectTransform.pivot.x * m_toggleRectTransform.sizeDelta.x);
+            float toggleRightAnchor = m_toggleRectTransform.anchoredPosition.x +
+                                     ((1-m_toggleRectTransform.pivot.x) * m_toggleRectTransform.sizeDelta.x);
 
-            float delta = toggleLeftAnchor - bgLeftAnchor;
+            float deltaLeft = toggleLeftAnchor - bgLeftAnchor;
+            float deltaRight = bgRightAnchor - toggleRightAnchor;
+            
+            float delta = Mathf.Min(deltaLeft, deltaRight);
+            
             m_toggleStart = m_toggleRectTransform.anchoredPosition.x;
-
-            m_toggleEnd = bgRightAnchor - delta
-                                        - ((1 - m_toggleRectTransform.pivot.x) * m_toggleRectTransform.sizeDelta.x);
+            
+            m_toggleEnd = Mathf.Approximately(delta, deltaLeft)
+                ? bgRightAnchor - delta - ((1 - m_toggleRectTransform.pivot.x) * m_toggleRectTransform.sizeDelta.x)
+                : bgLeftAnchor + delta + (m_toggleRectTransform.pivot.x * m_toggleRectTransform.sizeDelta.x);
+             
         }
 
         private void PlayEffect(bool instant)
@@ -141,19 +145,19 @@ namespace _Project.Scripts.UI.UIElements
 
             Tween.StopAll();
 
-            if (instant)
+            if (instant || animationTime == 0f)
             {
-                m_toggleRectTransform.anchoredPosition = isOn
-                    ? new Vector2(m_toggleEnd, m_toggleRectTransform.anchoredPosition.y)
-                    : new Vector2(m_toggleStart, m_toggleRectTransform.anchoredPosition.y);
+                m_toggleRectTransform.anchoredPosition = isOn == isMirrored
+                    ? new Vector2(m_toggleStart, m_toggleRectTransform.anchoredPosition.y)
+                    : new Vector2(m_toggleEnd, m_toggleRectTransform.anchoredPosition.y);
 
                 background.color = isOn ? onColor : offColor;
                 return;
             }
-
+            
             Tween.UIAnchoredPositionX(
                 target: m_toggleRectTransform,
-                endValue: isOn ? m_toggleEnd : m_toggleStart,
+                endValue: isOn == isMirrored ? m_toggleStart : m_toggleEnd,
                 ease: Ease.InOutExpo,
                 duration: animationTime,
                 cycles: 1

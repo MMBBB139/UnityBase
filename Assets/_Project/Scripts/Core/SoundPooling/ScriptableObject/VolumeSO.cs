@@ -56,10 +56,10 @@ namespace _Project.Scripts.Core.SoundPooling.ScriptableObject
 
         public void InitializeMixer()
         {
-            MuteOnValueChanged(Mute);
             MasterVolumeOnValueChanged(MasterVolume);
             MusicVolumeOnValueChanged(MusicVolume);
             SfxVolumeOnValueChanged(SfxVolume);
+            MuteOnValueChanged(Mute);
         }
         
         private void MuteOnValueChanged(bool isMute)

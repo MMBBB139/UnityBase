@@ -10,13 +10,14 @@ namespace _Project.Scripts.UI.Editor
     [CanEditMultipleObjects]
     public class SlideToggleEditor : SelectableEditor
     {
-        SerializedProperty m_isOnProperty;
-        SerializedProperty m_toggleBallProperty;
-        SerializedProperty m_backgroundProperty;
-        SerializedProperty m_onColorProperty;
-        SerializedProperty m_offColorProperty;
-        SerializedProperty m_onValueChangedProperty;
-        SerializedProperty m_animationTimeProperty;
+        private SerializedProperty _isOnProperty;
+        private SerializedProperty _isMirroredProperty;
+        private SerializedProperty _toggleBallProperty;
+        private SerializedProperty _backgroundProperty;
+        private SerializedProperty _onColorProperty;
+        private SerializedProperty _offColorProperty;
+        private SerializedProperty _onValueChangedProperty;
+        private SerializedProperty _animationTimeProperty;
         
         
         
@@ -24,13 +25,14 @@ namespace _Project.Scripts.UI.Editor
         protected override void OnEnable()
         {
             base.OnEnable();
-            m_isOnProperty = serializedObject.FindProperty("isOn");
-            m_toggleBallProperty = serializedObject.FindProperty("toggleBall");
-            m_backgroundProperty = serializedObject.FindProperty("background");
-            m_onColorProperty = serializedObject.FindProperty("onColor");
-            m_offColorProperty = serializedObject.FindProperty("offColor");
-            m_animationTimeProperty = serializedObject.FindProperty("animationTime");
-            m_onValueChangedProperty = serializedObject.FindProperty("onValueChanged");
+            _isOnProperty = serializedObject.FindProperty("isOn");
+            _isMirroredProperty = serializedObject.FindProperty("isMirrored");
+            _toggleBallProperty = serializedObject.FindProperty("toggleBall");
+            _backgroundProperty = serializedObject.FindProperty("background");
+            _onColorProperty = serializedObject.FindProperty("onColor");
+            _offColorProperty = serializedObject.FindProperty("offColor");
+            _animationTimeProperty = serializedObject.FindProperty("animationTime");
+            _onValueChangedProperty = serializedObject.FindProperty("onValueChanged");
             
             
         }
@@ -43,24 +45,25 @@ namespace _Project.Scripts.UI.Editor
             serializedObject.Update();
             SlideToggle toggle = serializedObject.targetObject as SlideToggle;
             EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(m_isOnProperty);
+            EditorGUILayout.PropertyField(_isOnProperty);
             if (EditorGUI.EndChangeCheck())
             {
                 if (!Application.isPlaying)
                     EditorSceneManager.MarkSceneDirty(toggle.gameObject.scene);
-                toggle.IsOn = m_isOnProperty.boolValue;
+                toggle.IsOn = _isOnProperty.boolValue;
             }
-            EditorGUILayout.PropertyField(m_toggleBallProperty);
-            EditorGUILayout.PropertyField(m_backgroundProperty);
+            EditorGUILayout.PropertyField(_isMirroredProperty);
+            EditorGUILayout.PropertyField(_toggleBallProperty);
+            EditorGUILayout.PropertyField(_backgroundProperty);
             
-            EditorGUILayout.PropertyField(m_onColorProperty);
-            EditorGUILayout.PropertyField(m_offColorProperty);
-            EditorGUILayout.PropertyField(m_animationTimeProperty);
+            EditorGUILayout.PropertyField(_onColorProperty);
+            EditorGUILayout.PropertyField(_offColorProperty);
+            EditorGUILayout.PropertyField(_animationTimeProperty);
             
             EditorGUILayout.Space();
 
             // Draw the event notification options
-            EditorGUILayout.PropertyField(m_onValueChangedProperty);
+            EditorGUILayout.PropertyField(_onValueChangedProperty);
 
             serializedObject.ApplyModifiedProperties();
         }
