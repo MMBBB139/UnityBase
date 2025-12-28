@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.Core.SoundPooling.Implement;
@@ -96,7 +96,7 @@ namespace _Project.Scripts.Core.SoundPooling
 #endif
         }
 
-        private void Awake()
+        protected override void OnAwake()
         {
             for (int i = 0; i < bufferSize; i++)
             {
